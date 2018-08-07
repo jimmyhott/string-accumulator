@@ -6,13 +6,15 @@ import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.StrBuilder;
+import org.apache.commons.lang3.text.StrMatcher;
 
 
 public class StringAccumulator {
 	
 	private static final String COMMA_DELIMITER = ",";
 	private static final String LINE_RETURN = "\n";
-	private static final String CUSTOM_DELIMETERS_SEPARATOR = "\\|";	
+	private static final String CUSTOM_DELIMITERS_SEPARATOR = "\\|";	
 	private static final int EMPTY_STRING_RETURN_VALUE = 0;
 	private static final int MAX_NUMBER = 1000;
 	
@@ -41,19 +43,19 @@ public class StringAccumulator {
 		Matcher matcher = pattern.matcher(inputString);
 		
 		String[] delimeters = null;
-		String numbersList = null;
+		StrBuilder numbersList = new StrBuilder();;
 		
 		//If the custom delimiters list is found
 		if (matcher.lookingAt()) {
 			//get the first group then split by the separator character
-			delimeters = matcher.group(1).split(CUSTOM_DELIMETERS_SEPARATOR);
+			delimeters = matcher.group(1).split(CUSTOM_DELIMITERS_SEPARATOR);
 			//string of numbers to be added follows the delimiters list  
-			numbersList = inputString.substring(matcher.end());
+			numbersList.append(inputString.substring(matcher.end()));
 		} else {
-			//otherwise, only default delimiters are supported
+			//if the custom delimiter is not found, only default delimiters are supported
 			delimeters = defaultDelimiters;
 			//string of numbers to be added is the original input string
-			numbersList = inputString;
+			numbersList.append(inputString);
 		}
 		
 		//If we have the delimiters list but don't have the number list, stop processing
@@ -61,13 +63,13 @@ public class StringAccumulator {
 			return EMPTY_STRING_RETURN_VALUE;
 		}
 		
-		//for ease of processing, transform all delimiters supported in the numbers line into comma
+		//for ease of processing, transform all delimiters identified to comma, then split the the line into an array.
 		for (String delimeter:delimeters) {
-			numbersList = StringUtils.replace(numbersList.toString(), delimeter, COMMA_DELIMITER);
-		}	
+			numbersList = numbersList.replaceAll(StrMatcher.stringMatcher(delimeter), COMMA_DELIMITER);
+		}		
 		
 		//change string array of input number to int array for further processing
-		int[] inputNumbers = Arrays.asList(numbersList.split(COMMA_DELIMITER)).stream()
+		int[] inputNumbers = Arrays.asList(numbersList.toString().split(COMMA_DELIMITER)).stream()
 				.map(String::trim)
 				.filter(item -> !StringUtils.isEmpty(item))
 				.mapToInt(Integer::parseInt).toArray();
@@ -80,7 +82,7 @@ public class StringAccumulator {
 			throw new Exception("negatives not allowed - " + Arrays.toString(negativeNumbers));
 		}
 		
-		//finally, sum all numbers as long as the number is <= MAX_NUMBER
+		//finally, sum all numbers, ignore the items that are > MAX_NUMBER
 		return IntStream.of(inputNumbers).filter(item -> item<=MAX_NUMBER).sum();	
 		
 	}

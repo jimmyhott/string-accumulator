@@ -2,6 +2,11 @@ package epamTest;
 
 public class Main {
 
+	/**
+	 * Test main program for running the StringAccumulator class
+	 * 
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		
 		StringAccumulator stringAccumulator = new StringAccumulator();

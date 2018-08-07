@@ -64,7 +64,7 @@ public class StringAccumulatorTest {
 	@Test
 	public void testMixedDefaultDelimiters() {
 		
-		String inputNumbers = "1,2\n 5,7,\n,10";
+		String inputNumbers = "1,2\n 5,7\n10";
 		int expectedValue = 25;
 		
 		try {
@@ -78,7 +78,7 @@ public class StringAccumulatorTest {
 	@Test
 	public void testNegativeNumbers() {
 		
-		String inputNumbers = "1,2\n -5,-7,\n,10";
+		String inputNumbers = "1,2\n -5,-7\n10";
 		
 		try {
 			stringAccmulator.add(inputNumbers);
